@@ -4,7 +4,6 @@ folder = fullpath(1:(idx(end)-1));
 
 addpath([folder '/analysis'])
 addpath([folder '/runner'])
-addpath([folder '/html'])
 addpath([folder '/helpers'])
 
 global DATA_PATH___
