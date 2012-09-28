@@ -33,7 +33,11 @@ for iCase=1:nCases
     success_cases=success_cases+isSuccess;
 
     if exist('task','var') && exist('events','var') && isstruct(events) && isfield(events,'updateTask')
-        events.updateTask(foldername,task,iCase,nCases);    
+        try
+	   events.updateTask(foldername,task,iCase,nCases);    
+        catch
+            disp('Error updating progress')
+        end
     end
 
 end
