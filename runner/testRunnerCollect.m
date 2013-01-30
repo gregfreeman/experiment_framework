@@ -57,4 +57,7 @@ end
 resultsCollection=mycellstruct2mat(resultsCollection);
 % resultsCollection=cell2mat(resultsCollection);
 
+if length(expCardinalityDim)==1
+    expCardinalityDim(2)=1;
+end
 resultsCollection=reshape(resultsCollection,expCardinalityDim);

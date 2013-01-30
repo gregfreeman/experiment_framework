@@ -40,13 +40,14 @@ foldername=[pathname '_results_' machinename '_' datestr(now,30)];
 mkdir(foldername)
 mkdir([foldername '/0000'])
 
+subs=cell(length(expDim),1);
 for iCase=1:nCases
     settings=struct();
     [subs{1:length(expDim)}]=ind2sub(expDim,iCase);
     caseSubscript = cell2mat(subs);
 
     for iParameter=1:length(paramset)
-        settings=setfield(settings,paramset(iParameter).field,paramset(iParameter).values{caseSubscript(iParameter)});
+        settings.(paramset(iParameter).field)=paramset(iParameter).values{caseSubscript(iParameter)};
     end
     iCaseLow=mod(iCase,10000);
     iCaseHigh=floor(iCase/10000);
@@ -58,5 +59,16 @@ for iCase=1:nCases
     save(fname,'settings','events')
 
 end
-save([foldername '/paramset'],'paramset')
+info.version='unknown';
+info.machinename=machinename;
+info.cases=nCases;
+info.foldername=foldername;
+try
+    [~,info.version]=system('git rev-parse HEAD');
+catch except
+    disp('Cannot get git version information')
+   disp(except)
+end
+
+save([foldername '/paramset'],'paramset','info')
 
