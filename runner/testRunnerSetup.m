@@ -36,7 +36,8 @@ end
 machinename = strtrim(lower(machinename));
 machinename = strrep(machinename,'-','');
 machinename = strrep(machinename,'.','');
-foldername=[pathname '_results_' machinename '_' datestr(now,30)];
+datenow=datestr(now,30);
+foldername=[pathname '_results_' machinename '_' datenow];
 mkdir(foldername)
 mkdir([foldername '/0000'])
 
@@ -60,13 +61,30 @@ for iCase=1:nCases
 
 end
 info.version='unknown';
+info.url='unknown';
 info.machinename=machinename;
 info.cases=nCases;
 info.foldername=foldername;
+info.experimentpath=pathname;
+[~, shortname]=fileparts(pathname);
+info.experiment=shortname;
+info.date=datenow;
 try
-    [~,info.version]=system('git rev-parse HEAD');
+    [err,temp]=system('git rev-parse HEAD');
+    if ~err
+        info.version=temp;
+    end
 catch except
     disp('Cannot get git version information')
+   disp(except)
+end
+try
+    [err,temp]=system('git config remote.origin.url');
+    if ~err
+        info.url=temp;
+    end
+catch except
+    disp('Cannot get git url information')
    disp(except)
 end
 

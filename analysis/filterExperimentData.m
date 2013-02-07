@@ -52,6 +52,8 @@ else  % assume cell
                 end
             end
         end
+    elseif length(select_values)==1 && islogical(select_values{1}) 
+        valueIdx=find(cell2mat(values{fieldIdx})==select_values{1});
     else
         error('dont know how to handle paramter type')
     end

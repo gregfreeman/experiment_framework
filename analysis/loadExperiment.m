@@ -1,4 +1,4 @@
-function [results,paramset]=loadExperiment(experiment,rootfolder,varargin)
+function [results,paramset,info]=loadExperiment(experiment,rootfolder,varargin)
 
 global RESULT_ROOT___
 
@@ -10,6 +10,8 @@ if ~exist([rootfolder '/' experiment '/results.mat'],'file')
 end
 load([rootfolder '/' experiment '/results']);
 load([rootfolder '/' experiment '/paramset']);
-
+if ~exist('info','var') % output null info if not included
+    info=[];
+end
 end
 
