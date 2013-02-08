@@ -1,4 +1,30 @@
 function [exp]=experimentObj(experiment,rootfolder,varargin)
+% [exp]=experimentObj(experiment,rootfolder,...)
+%experimentObj creates an object managing experiment data
+% input:
+%   experiment: experiment folder name
+%   rootfolder: folder where experiment results are stored
+%
+%  experimentObj(experiment,rootfolder,...)
+%    allows passing options to loadExperiment
+% output:
+%   exp: experiment structure
+%   exp.paramset: experiment parameters
+%   exp.results: experiment results
+%   exp.info: experiment information
+%   exp.series: method to extract series slice from experiment cube
+%       d=exp.series(filters,dependentVars,valueField,name)
+%         filters:structure representing the values to filter
+%         dependentVars:the dependent variable of the series
+%         valueField: a result field or function handle to select the
+%               results value
+%         name: optional value to name the series
+%       d.x = dependent values (1xn)
+%       d.y = result values (mxn)
+%       d.label = labels for series (mx1)
+%       d.name = names for series (mx1)
+%
+
 
     [exp.results,exp.paramset,exp.info]=loadExperiment(experiment,rootfolder,varargin);
  
@@ -34,9 +60,17 @@ function [exp]=experimentObj(experiment,rootfolder,varargin)
             error('only 1 dependent variable is supported')
         end
         
-        if ~isfield(r2(1),valueField)
-            error('value field not present in results:'+valueField)
-        end        
+        if ischar(valueField) && ~isfield(r2(1),valueField)
+            error(['value field not present in results:' valueField])
+        end            
+        if ischar(valueField)
+            valueSelect=@(x) x.(valueField);
+        else
+            if ~isa(valueField,'function_handle')
+                error('value field must be a function handle or field name')
+            end
+            valueSelect=valueField;
+        end
         setCardinality=setVarIdx.*expCardinalityDim;
         dependentCardinality=dependentVarIdx.*expCardinalityDim;
         numSets=prod(setCardinality(setCardinality>0));
@@ -52,7 +86,7 @@ function [exp]=experimentObj(experiment,rootfolder,varargin)
             groupIdx=mysub2ind(groupDim,groupSubscript);
             dependentSubscript =caseSubscript(dependentVarIdx);
             xIdx=dependentSubscript(1); % assume 1 dependent var
-            y=r2(iCase).(valueField);
+            y=valueSelect(r2(iCase));
             if ~isempty(y)
                 matrix(groupIdx,xIdx)=y;
             end
