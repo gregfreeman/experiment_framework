@@ -63,3 +63,5 @@ resultsCollection = testRunnerCollectSave( foldername );
 
 disp '********************************************************'
 disp (sprintf('Completed %d test cases of %d',success_cases,nCases) );
+disp(['Foldername: ' foldername])
+disp (sprintf('Load data:   exp=loadExperiment(''%s\'');',foldername) );
